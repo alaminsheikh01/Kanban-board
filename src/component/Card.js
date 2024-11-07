@@ -1,20 +1,79 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { FaLink } from "react-icons/fa6";
 import { BiChat } from "react-icons/bi";
 import { RiStackFill } from "react-icons/ri";
 import { RiTodoLine } from "react-icons/ri";
 import "./Card.css";
+import axios from "axios";
+
 
 // Modal Component
-const Modal = ({ isOpen, closeModal, content }) => {
+const Modal = ({ isOpen, closeModal, content, data }) => {
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadMessage, setUploadMessage] = useState("");
+
+
   if (!isOpen) return null; // Do not render if modal is not open
 
+ 
+  // Handle file selection
+  const handleFileChange = (e) => {
+    console.log(e.target.files);
+    setSelectedFiles(e.target.files);
+  };
+
+  // Handle file upload
+  const handleUpload = async () => {
+    const formData = new FormData();
+    Array.from(selectedFiles).forEach((file) => {
+      formData.append("files", file);
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("response", response);
+      if (response.ok) {
+        setUploadMessage("Files uploaded successfully!");
+      } else {
+        setUploadMessage("Failed to upload files.");
+      }
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      setUploadMessage("An error occurred during upload.");
+    }
+  };
+console.log(data)
   return (
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>Attachment Modal</h2>
         <p>{content}</p>
+
+        {/* File input */}
+        <input type="file" multiple onChange={handleFileChange} />
+
+        {/* Upload button */}
+        <button onClick={handleUpload}>Upload Files</button>
+
+        {/* Display upload message */}
+        {/* {uploadMessage && <p>{uploadMessage}</p>} */}
+        {data.map((file) => (
+          <div key={file._id}>
+            <a download>
+              {file.originalName}
+            </a>
+          </div>
+        ))}
+
         <button onClick={closeModal}>Close</button>
       </div>
     </div>
@@ -23,6 +82,7 @@ const Modal = ({ isOpen, closeModal, content }) => {
 
 const Card = ({ content }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [data, setData] = useState([]);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -31,6 +91,17 @@ const Card = ({ content }) => {
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
+
+    // get data
+    const getFile = async () => {
+      const result = await axios.get("http://localhost:5001/get-file");
+      console.log(result.data.data);
+      setData(result.data.data);
+    };
+
+  useEffect(() =>{
+    getFile();
+  },[])
 
   return (
     <div className="card">
@@ -83,7 +154,12 @@ const Card = ({ content }) => {
         <span>📅 {moment().format("YYYY-MM-DD")}</span>
       </div>
 
-      <Modal isOpen={isModalOpen} closeModal={handleModalClose} content={content} />
+      <Modal
+        isOpen={isModalOpen}
+        closeModal={handleModalClose}
+        content={content}
+        data={data}
+      />
     </div>
   );
 };
