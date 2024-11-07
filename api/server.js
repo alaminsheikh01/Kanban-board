@@ -87,3 +87,20 @@ app.get("/get-file", async (req, res) => {
     res.json({ status: error });
   }
 });
+
+// DELETE route to delete a file by ID
+app.delete("/delete-file/:id", async (req, res) => {
+  const fileId = req.params.id;
+
+  try {
+    const file = await File.findByIdAndDelete(fileId);
+
+    if (!file) {
+      return res.status(404).json({ status: "File not found" });
+    }
+
+    res.json({ status: "File deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ status: "Error deleting file", error });
+  }
+});

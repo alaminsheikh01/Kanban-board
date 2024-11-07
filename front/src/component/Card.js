@@ -4,11 +4,12 @@ import { FaLink } from "react-icons/fa6";
 import { BiChat } from "react-icons/bi";
 import { RiStackFill } from "react-icons/ri";
 import { RiTodoLine } from "react-icons/ri";
+import { FaTrash } from "react-icons/fa"; 
 import "./Card.css";
 import axios from "axios";
 
 // Modal Component
-const Modal = ({ isOpen, closeModal, content, data, getFile }) => {
+const Modal = ({ isOpen, closeModal, content, data, getFile, setData }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadMessage, setUploadMessage] = useState("");
 
@@ -44,6 +45,15 @@ const Modal = ({ isOpen, closeModal, content, data, getFile }) => {
     }
   };
 
+  const deleteFile = async (fileId) => {
+    try {
+      await axios.delete(`http://localhost:5001/delete-file/${fileId}`);
+      setData(data.filter((file) => file._id !== fileId)); // Update state to remove deleted file
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+
   return (
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -59,8 +69,19 @@ const Modal = ({ isOpen, closeModal, content, data, getFile }) => {
 
         <div className="file-list">
           {data.map((file) => (
-            <div key={file._id}>
-              <span>{`${file.originalName},`}</span>
+            <div
+              key={file._id}
+              onClick={() => deleteFile(file._id)} // Trigger delete on click
+              style={{
+                display: "inline-block",
+                marginRight: "10px",
+                padding: "5px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              <span>{file.originalName}</span>
             </div>
           ))}
         </div>
@@ -86,8 +107,8 @@ const Card = ({ content, length }) => {
   };
 
   const handleModalClose = () => {
-    getFile();
     setIsModalOpen(false);
+    getFile();
   };
 
   return (
@@ -147,6 +168,7 @@ const Card = ({ content, length }) => {
         content={content}
         data={data}
         getFile={getFile}
+        setData={setData}
       />
     </div>
   );
