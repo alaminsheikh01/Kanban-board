@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import "./Column.css";
 
-const Column = ({ title, cards, icon }) => {
+const Column = ({ title, cards, icon, length }) => {
   return (
     <div className="column">
       <div className="column-header">
@@ -14,7 +14,7 @@ const Column = ({ title, cards, icon }) => {
       </div>
       <div className="column-cards">
         {cards.map((content, index) => (
-          <Card key={index} content={content} />
+          <Card key={index} content={content} length={length} />
         ))}
       </div>
     </div>

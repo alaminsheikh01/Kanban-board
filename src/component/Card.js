@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { FaLink } from "react-icons/fa6";
 import { BiChat } from "react-icons/bi";
@@ -7,51 +7,43 @@ import { RiTodoLine } from "react-icons/ri";
 import "./Card.css";
 import axios from "axios";
 
-
 // Modal Component
-const Modal = ({ isOpen, closeModal, content, data }) => {
+const Modal = ({ isOpen, closeModal, content, data, getFile }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadMessage, setUploadMessage] = useState("");
 
-
   if (!isOpen) return null; // Do not render if modal is not open
 
- 
   // Handle file selection
   const handleFileChange = (e) => {
-    console.log(e.target.files);
     setSelectedFiles(e.target.files);
   };
 
   // Handle file upload
   const handleUpload = async () => {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      setUploadMessage("Please select files to upload.");
+      return;
+    }
+
     const formData = new FormData();
     Array.from(selectedFiles).forEach((file) => {
       formData.append("files", file);
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:5001/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("response", response);
-      if (response.ok) {
-        setUploadMessage("Files uploaded successfully!");
-      } else {
-        setUploadMessage("Failed to upload files.");
-      }
+      await axios.post("http://localhost:5001/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      getFile();
+      setUploadMessage("Files uploaded successfully!");
     } catch (error) {
-      console.error("Error uploading files:", error);
       setUploadMessage("An error occurred during upload.");
     }
   };
-console.log(data)
+
   return (
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -63,16 +55,15 @@ console.log(data)
 
         {/* Upload button */}
         <button onClick={handleUpload}>Upload Files</button>
+        {uploadMessage && <p style={{ color: "red" }}>{uploadMessage}</p>}
 
-        {/* Display upload message */}
-        {/* {uploadMessage && <p>{uploadMessage}</p>} */}
-        {data.map((file) => (
-          <div key={file._id}>
-            <a download>
-              {file.originalName}
-            </a>
-          </div>
-        ))}
+        <div className="file-list">
+          {data.map((file) => (
+            <div key={file._id}>
+              <span>{`${file.originalName},`}</span>
+            </div>
+          ))}
+        </div>
 
         <button onClick={closeModal}>Close</button>
       </div>
@@ -80,28 +71,24 @@ console.log(data)
   );
 };
 
-const Card = ({ content }) => {
+const Card = ({ content, length }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [data, setData] = useState([]);
 
+  const getFile = async () => {
+    const result = await axios.get("http://localhost:5001/get-file");
+    setData(result.data.data);
+  };
+
   const handleModalOpen = () => {
+    getFile();
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
+    getFile();
     setIsModalOpen(false);
   };
-
-    // get data
-    const getFile = async () => {
-      const result = await axios.get("http://localhost:5001/get-file");
-      console.log(result.data.data);
-      setData(result.data.data);
-    };
-
-  useEffect(() =>{
-    getFile();
-  },[])
 
   return (
     <div className="card">
@@ -149,7 +136,7 @@ const Card = ({ content }) => {
           15
         </span>
         <span onClick={handleModalOpen} className="link">
-          <FaLink /> 25
+          <FaLink /> {length}
         </span>
         <span>📅 {moment().format("YYYY-MM-DD")}</span>
       </div>
@@ -159,6 +146,7 @@ const Card = ({ content }) => {
         closeModal={handleModalClose}
         content={content}
         data={data}
+        getFile={getFile}
       />
     </div>
   );
