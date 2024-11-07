@@ -4,7 +4,6 @@ import { FaLink } from "react-icons/fa6";
 import { BiChat } from "react-icons/bi";
 import { RiStackFill } from "react-icons/ri";
 import { RiTodoLine } from "react-icons/ri";
-import { FaTrash } from "react-icons/fa"; 
 import "./Card.css";
 import axios from "axios";
 
