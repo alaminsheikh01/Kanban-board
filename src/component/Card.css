@@ -1,0 +1,128 @@
+/* Card.css */
+.card {
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    padding: 11px;
+    box-shadow: 5px 0px 11px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #1707e1;
+    margin-bottom: 5px;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .client-info,
+  .assignee-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .client-image,
+  .assignee-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .card-client {
+    font-weight: bold;
+    color: #197bb2;
+    font-size: 14px;
+  }
+  
+  .assignee-name {
+    font-size: 0.85rem;
+    color: #666666;
+  }
+  
+  .card-description {
+    color: #666666;
+    font-size: 12px;
+    margin: 0 0 1rem;
+  }
+  
+  .card-details {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #666666;
+  }
+
+  .card-details .number {
+    background-color: #efefef;
+    padding: 6px 12px;
+    font-weight: bold;
+    border-radius: 50px; /* Fully rounded corners */
+    display: inline-block;
+    text-align: center;
+  }
+  
+  
+  
+  .card-details .icon-image {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .desc {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+
+
+  /* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 10px;
+  }
+  
+  .modal-content button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #197bb2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .modal-content button:hover {
+    background-color: #155d8b;
+  }
+  
+  .link{
+    cursor: pointer;
+    color: #197bb2;
+  }
