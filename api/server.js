@@ -22,11 +22,11 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
-// Multer Configuration for File Upload
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/");
+//   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   },
@@ -34,7 +34,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Endpoint to Upload Multiple Files
 app.post("/upload", upload.array("files", 10), async (req, res) => {
   try {
     const files = req.files;
